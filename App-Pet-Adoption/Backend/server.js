@@ -250,6 +250,9 @@ app.delete('/api/adopts/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error while deleting request' });
   }
 });
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀 on Azure");
+});
 app.use(express.static("./frontend/my-app/public"));
 app.get("*",(req,res)=>{
   res.sendFile(path.resolve(__dirname,"frontend","my-app","public","index.html"))

@@ -1,3 +1,5 @@
 {
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "appService.defaultWebAppToDeploy": "/subscriptions/4eaa7f36-6044-4029-b7dd-7a2947f3fc80/resourceGroups/PetBackend/providers/Microsoft.Web/sites/BackendPet",
+    "appService.deploySubpath": "App-Pet-Adoption\\Backend"
 }

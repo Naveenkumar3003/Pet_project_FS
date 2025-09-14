@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const MONGO_URL = "mongodb://localhost:27017/myapp";
+const MONGO_URL = "mongodb+srv://naveennkumar0312_db_user:Naveen%402006@cluster0.6pslv2s.mongodb.net/PetAdoptionDB?retryWrites=true&w=majority&appName=Cluster0";
 const connectDB = async () => {
   try {
     const con = await mongoose.connect(MONGO_URL);
