@@ -4,11 +4,12 @@ import './AdminLayout.css';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const adminData = JSON.parse(localStorage.getItem('admin')) || {};
-  const username = adminData.email.split('@')[0];
+  const adminData = JSON.parse(localStorage.getItem('admin') || '{}');
+  const username = adminData.email ? adminData.email.split('@')[0] : (adminData.username || 'Admin');
+  
   const handleLogout = () => {
-    localStorage.removeItem('admin');
-    navigate('/admin/login');
+    localStorage.clear();
+    navigate('/admin', { replace: true });
   };
 
   return (
@@ -18,12 +19,14 @@ const AdminLayout = () => {
         <div className="admin-profile">
           <h2>PetPals Connect</h2>
           <div className="admin-info">
-            <p className="admin-name">{username || 'Admin'}</p>
-            <p className="admin-email">{adminData.email || 'admin@example.com'}</p>
+            <p className="admin-name">{username}</p>
+            <p className="admin-email">{adminData.email || 'admin@petpals.com'}</p>
           </div>
         </div>
         <nav className="admin-nav">
-          
+          <Link to="/Admindash" className="nav-item">
+            <i className="fas fa-chart-line"></i> Dashboard
+          </Link>
           <Link to="/PetAddForm" className="nav-item">
             <i className="fas fa-plus"></i> Add Pet
           </Link>

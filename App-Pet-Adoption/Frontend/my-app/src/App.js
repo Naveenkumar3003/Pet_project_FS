@@ -6,40 +6,66 @@ import Home from './Components/Home';
 import PetAddForm from './Components/NewPet/PetAddForm';
 import DogDetails from './Components/Dogpage/DogDetails';
 import CatDetails from './Components/Catpage/CatDetails';
+import PetCatalog from './Components/Catalog/PetCatalog';
 import AdoptForm from './Components/AdoptPet/AdoptForm';
 import Petrequestlist from './Components/Petrequestlist/Petrequestlist.jsx';
 import Pets from './Components/AllDetails/Pets';
 import AdminDash from './Components/Admindash/AdminDashboard.jsx';
+import MyRequests from './Components/MyRequests/MyRequests.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-// Simple auth check function
+// User auth check
 const isAuthenticated = () => {
-  return localStorage.getItem('user') !== null;
+  return localStorage.getItem('userToken') !== null || localStorage.getItem('user') !== null || localStorage.getItem('token') !== null;
 };
 
-// Admin auth check function
+// Admin auth check
 const isAdminAuthenticated = () => {
-  return localStorage.getItem('admin') !== null;
+  return localStorage.getItem('adminToken') !== null || localStorage.getItem('admin') !== null;
 };
 
-// Protected route component
+// Protected route component for standard users
 const ProtectedRoute = ({ children }) => {
-  return isAuthenticated() ? children : <Navigate to="/" />;
+  return isAuthenticated() ? children : <Navigate to="/" replace />;
 };
 
 // Admin protected route component
 const AdminProtectedRoute = ({ children }) => {
-  return isAdminAuthenticated() ? children : <Navigate to="/admin" />;
+  return isAdminAuthenticated() ? children : <Navigate to="/admin" replace />;
+};
+
+// Public only route (prevents returning to login if already authenticated)
+const PublicOnlyRoute = ({ children }) => {
+  if (isAdminAuthenticated()) {
+    return <Navigate to="/Admindash" replace />;
+  }
+  if (isAuthenticated()) {
+    return <Navigate to="/home" replace />;
+  }
+  return children;
 };
 
 function App() {
   return (
     <>
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<UserCard />} />
-        <Route path="/admin" element={<AdminLogin />} />
+        {/* Public-Only Auth Routes */}
+        <Route 
+          path="/" 
+          element={
+            <PublicOnlyRoute>
+              <UserCard />
+            </PublicOnlyRoute>
+          } 
+        />
+        <Route 
+          path="/admin" 
+          element={
+            <PublicOnlyRoute>
+              <AdminLogin />
+            </PublicOnlyRoute>
+          } 
+        />
         
         {/* Protected User Routes */}
         <Route 
@@ -51,14 +77,21 @@ function App() {
           } 
         />
         <Route 
-          path="/Admindash" 
-           element={
-            <AdminProtectedRoute>
-              <AdminDash />
-           </AdminProtectedRoute>
-         } 
-       />
-
+          path="/catalog" 
+          element={
+            <ProtectedRoute>
+              <PetCatalog />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/my-requests" 
+          element={
+            <ProtectedRoute>
+              <MyRequests />
+            </ProtectedRoute>
+          } 
+        />
         <Route 
           path="/dogs/:id" 
           element={
@@ -79,7 +112,7 @@ function App() {
           path="/dogs" 
           element={
             <ProtectedRoute>
-              <DogDetails />
+              <PetCatalog />
             </ProtectedRoute>
           } 
         />
@@ -87,16 +120,16 @@ function App() {
           path="/cats" 
           element={
             <ProtectedRoute>
-              <CatDetails />
+              <PetCatalog />
             </ProtectedRoute>
           } 
         />
         <Route 
           path="/viewPetDetails" 
           element={
-            <ProtectedRoute>
+            <AdminProtectedRoute>
               <Pets />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           } 
         />
         <Route 
@@ -110,6 +143,14 @@ function App() {
         
         {/* Protected Admin Routes */}
         <Route 
+          path="/Admindash" 
+          element={
+            <AdminProtectedRoute>
+              <AdminDash />
+            </AdminProtectedRoute>
+          } 
+        />
+        <Route 
           path="/PetAddForm" 
           element={
             <AdminProtectedRoute>
@@ -120,14 +161,19 @@ function App() {
         <Route 
           path="/Petrequestlist" 
           element={
-            <ProtectedRoute>
+            <AdminProtectedRoute>
               <Petrequestlist />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           } 
         />
         
-        {/* Catch all - redirect to home */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Catch all - redirect based on auth */}
+        <Route 
+          path="*" 
+          element={
+            isAuthenticated() ? <Navigate to="/home" replace /> : <Navigate to="/" replace />
+          } 
+        />
       </Routes>
     </>
   );

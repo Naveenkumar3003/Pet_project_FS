@@ -43,8 +43,9 @@
       "last 1 safari version"
     ]
   },
-  "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

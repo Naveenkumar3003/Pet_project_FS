@@ -11,7 +11,7 @@ const Dogcard = ({ dogs }) => {
   const navigate = useNavigate();
 
   const handleAdoptClick = () => {
-    navigate("/adopt");
+    navigate("/adopt", { state: { pet: dogs } });
   };
 
   return (

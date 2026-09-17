@@ -84,8 +84,22 @@ const AdoptSchema = new mongoose.Schema({
   agreement: {
     type: Boolean,
     required: false,
+  },
+  petId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Pets",
+    required: false,
+  },
+  status: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
+  adoptedAt: {
+    type: Date,
+    default: null,
   }
-});
+}, { timestamps: true });
 
 const Adopt = mongoose.model("Adopt", AdoptSchema);
 

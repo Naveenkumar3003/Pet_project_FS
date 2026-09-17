@@ -1,0 +1,13 @@
+# App-Pet-Adoption gitignore
+node_modules/
+.env
+.env.local
+.env.*.local
+build/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+coverage/

@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import '../NewPet/PetAddFormStyle.css';
-import Navigationbar from '../Navigationbar';
+import AdminNavigationbar from '../Admin/AdminNavigationbar';
 
 function PetAddForm() {
   const [formData, setFormData] = useState({
@@ -40,11 +40,7 @@ function PetAddForm() {
     setAlert({ show: false, message: '', variant: '' });
 
     try {
-      const response = await axios.post('http://localhost:8000/api/pets', formData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      await apiClient.post('/api/pets', formData);
       setAlert({ show: true, message: 'Pet added successfully!', variant: 'success' });
       clearForm();
     } catch (error) {
@@ -74,7 +70,7 @@ function PetAddForm() {
 
   return (
     <>
-      <Navigationbar />
+      <AdminNavigationbar />
       <div className="form-container">
         {alert.show && <Alert variant={alert.variant}>{alert.message}</Alert>}
         <Form onSubmit={handleSubmit}>
@@ -105,15 +101,21 @@ function PetAddForm() {
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Species</Form.Label>
-            <Form.Control
-              type="text"
+            <Form.Select
               name="species"
               className="input"
-              placeholder="Enter Species"
               value={formData.species}
               onChange={handleChange}
               required
-            />
+            >
+              <option value="">Select Species</option>
+              <option value="Dog">Dog</option>
+              <option value="Cat">Cat</option>
+              <option value="Bird">Bird</option>
+              <option value="Rabbit">Rabbit</option>
+              <option value="Small Pet">Small Pet</option>
+              <option value="Reptile">Reptile</option>
+            </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Age</Form.Label>

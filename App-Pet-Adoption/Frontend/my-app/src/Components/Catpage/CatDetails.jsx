@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import Navigationbar from '../Navigationbar';
 import { Container, Row } from 'react-bootstrap';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import CatCard from './CatCard';
 
 const CatDetails = () => {
@@ -11,10 +11,11 @@ const CatDetails = () => {
   const catRefs = useRef({});
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/petdata")
+    apiClient
+      .get("/api/petdata")
       .then((response) => {
-        setCatData(response.data);
+        const available = (response.data || []).filter(p => !p.status || p.status === 'available');
+        setCatData(available);
       })
       .catch((error) => {
         console.error(error);

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import Navigationbar from '../Navigationbar';
 import { Container, Row } from 'react-bootstrap';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import Dogcard from '../Dogpage/Dogcard';
 
 const DogDetails = () => {
@@ -11,10 +11,11 @@ const DogDetails = () => {
   const dogRefs = useRef({});
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/petdata")
+    apiClient
+      .get("/api/petdata")
       .then((response) => {
-        setDogData(response.data);
+        const available = (response.data || []).filter(p => !p.status || p.status === 'available');
+        setDogData(available);
       })
       .catch((error) => {
         console.error(error);

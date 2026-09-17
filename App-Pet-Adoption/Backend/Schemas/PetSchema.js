@@ -1,58 +1,72 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const PetSchema = mongoose.Schema({
-    petName : {
-        type : String, 
-        required : false
+const PetSchema = new mongoose.Schema({
+    petName: {
+        type: String,
+        required: true,
+        trim: true
     },
-    breed : {
-        type : String, 
-        required : false
+    breed: {
+        type: String,
+        required: true,
+        trim: true
     },
-    species : {
-        type : String, 
-        required : false
+    species: {
+        type: String,
+        required: true,
+        trim: true
     },
-    age : {
-        type : String, 
-        required : false
+    age: {
+        type: String,
+        default: 'Unknown'
     },
-    gender : {
-        type : String, 
-        required : false
+    gender: {
+        type: String,
+        default: 'Unknown'
     },
-    origin : {
-        type : String, 
-        required : false
+    origin: {
+        type: String,
+        default: 'N/A'
     },
-    size : {
-        type : String, 
-        required : false
+    size: {
+        type: String,
+        default: 'Medium'
     },
-    weight : {
-        type : String,
-        required : false
+    weight: {
+        type: String,
+        default: 'N/A'
     },
-    temperament : {
-        type : String,
-        required : false
+    temperament: {
+        type: String,
+        default: 'Friendly'
     },
-    coat : {
-        type : String,
-        required : false
+    coat: {
+        type: String,
+        default: 'Short'
     },
-    lifeSpan : {
-        type : String,
-        required : false
+    lifeSpan: {
+        type: String,
+        default: '10-15 years'
     },
-    specialCharacteristics : {
-        type : String,
-        required : false
+    specialCharacteristics: {
+        type: String,
+        default: 'Loving pet seeking home'
     },
-    image : {
-        type : String,
-        required : false
+    image: {
+        type: String,
+        default: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80'
+    },
+    status: {
+        type: String,
+        enum: ['available', 'adopted'],
+        default: 'available'
+    },
+    adoptedAt: {
+        type: Date,
+        default: null
     }
-});
-const Pets = mongoose.model("Pets",PetSchema);
+}, { timestamps: true });
+
+const Pets = mongoose.model("Pets", PetSchema);
 module.exports = Pets;
+

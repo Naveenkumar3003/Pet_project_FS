@@ -9,7 +9,7 @@ const CatCard = ({ cats }) => {
   const handleClose = () => setShowModal(false);
   const navigate = useNavigate();
   const handleAdoptClick = () => {
-    navigate("/adopt");
+    navigate("/adopt", { state: { pet: cats } });
   };
 
   return (

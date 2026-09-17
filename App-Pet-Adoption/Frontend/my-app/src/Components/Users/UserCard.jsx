@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Alert, Card } from "react-bootstrap";
 import "./UserCard.css";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useNavigate } from "react-router-dom";
 
 const UserCard = () => {
@@ -14,20 +14,11 @@ const UserCard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const navigate = useNavigate();
 
   const handleSignupChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleLoginEmailChange = (e) => {
-    setUserEmail(e.target.value);
-  };
-
-  const handleLoginPasswordChange = (e) => {
-    setUserPassword(e.target.value);
   };
 
   const handleSignupSubmit = async (e) => {
@@ -36,53 +27,24 @@ const UserCard = () => {
     setAlert({ show: false, message: "", variant: "" });
 
     if (!formData.username || !formData.email || !formData.password) {
-      setAlert({
-        show: true,
-        message: "All fields are required!",
-        variant: "danger",
-      });
+      setAlert({ show: true, message: "All fields are required!", variant: "danger" });
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/users",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await apiClient.post("/api/users", formData);
 
       if (response.data.success) {
-        setAlert({
-          show: true,
-          message: "User Registered Successfully! Please log in.",
-          variant: "success",
-        });
-        setFormData({
-          username: "",
-          email: "",
-          password: "",
-        });
+        setAlert({ show: true, message: "Registered successfully. Please log in.", variant: "success" });
+        setFormData({ username: "", email: "", password: "" });
         setIsSignup(false);
       } else {
-        setAlert({
-          show: true,
-          message: response.data.error || "Registration failed!",
-          variant: "danger",
-        });
+        setAlert({ show: true, message: response.data.error || "Registration failed!", variant: "danger" });
       }
     } catch (error) {
-      console.error("Error during signup:", error);
-      const errorMessage = error.response?.data?.error || "Registration failed! Please try again.";
-      setAlert({
-        show: true,
-        message: errorMessage,
-        variant: "danger",
-      });
+      const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
+      setAlert({ show: true, message: errorMessage, variant: "danger" });
     } finally {
       setIsLoading(false);
     }
@@ -94,46 +56,36 @@ const UserCard = () => {
     setAlert({ show: false, message: "", variant: "" });
 
     if (!userEmail || !userPassword) {
-      setAlert({
-        show: true,
-        message: "Email and password are required!",
-        variant: "danger",
-      });
+      setAlert({ show: true, message: "Email and password are required!", variant: "danger" });
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/users/login",
-        { email: userEmail, password: userPassword },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await apiClient.post("/api/users/login", {
+        email: userEmail,
+        password: userPassword,
+      });
 
       if (response.data.success) {
+        localStorage.clear();
+        if (response.data.token) {
+          localStorage.setItem("userToken", response.data.token);
+          localStorage.setItem("token", response.data.token);
+        }
         localStorage.setItem("user", JSON.stringify(response.data.user));
+        if (response.data.user?.email) {
+          localStorage.setItem("userEmail", response.data.user.email);
+        }
         setUserEmail("");
         setUserPassword("");
-        navigate("/home");
+        navigate("/home", { replace: true });
       } else {
-        setAlert({
-          show: true,
-          message: "Invalid email or password!",
-          variant: "danger",
-        });
+        setAlert({ show: true, message: "Invalid email or password!", variant: "danger" });
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      const errorMessage = error.response?.data?.message || "Login Failed! Please check your credentials.";
-      setAlert({
-        show: true,
-        message: errorMessage,
-        variant: "danger",
-      });
+      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials.";
+      setAlert({ show: true, message: errorMessage, variant: "danger" });
     } finally {
       setIsLoading(false);
     }
@@ -163,7 +115,7 @@ const UserCard = () => {
               <>
                 <h2 className="auth-title">Create Account</h2>
                 <p className="auth-subtitle">Join our community today</p>
-                <Form onSubmit={handleSignupSubmit}>
+                <Form onSubmit={handleSignupSubmit} autoComplete="off">
                   <Form.Group className="mb-3" controlId="formSignUpName">
                     <Form.Control
                       type="text"
@@ -173,6 +125,7 @@ const UserCard = () => {
                       name="username"
                       required
                       className="auth-input"
+                      autoComplete="new-username"
                     />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formSignUpEmail">
@@ -184,6 +137,7 @@ const UserCard = () => {
                       name="email"
                       required
                       className="auth-input"
+                      autoComplete="new-email"
                     />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formSignUpPassword">
@@ -195,6 +149,7 @@ const UserCard = () => {
                       name="password"
                       required
                       className="auth-input"
+                      autoComplete="new-password"
                     />
                   </Form.Group>
                   <Button
@@ -207,49 +162,41 @@ const UserCard = () => {
                 </Form>
                 <p className="auth-switch-text">
                   Already have an account?{" "}
-                  <span className="auth-switch-link" onClick={() => setIsSignup(false)}>
+                  <span className="auth-switch-link" onClick={() => { setIsSignup(false); setAlert({ show: false, message: "", variant: "" }); }}>
                     Log in
                   </span>
                 </p>
               </>
             ) : (
               <>
-                <h2 className="auth-title">Welcome back!</h2>
+                <h2 className="auth-title">Welcome back</h2>
                 <h3 className="auth-subtitle">Login to your account</h3>
-                <p className="auth-welcome-text">It's nice to see you again. Ready to adopt pet?</p>
-                <Form onSubmit={handleLoginSubmit}>
+                <p className="auth-welcome-text">Ready to find your next pet companion?</p>
+                <Form onSubmit={handleLoginSubmit} autoComplete="off">
                   <Form.Group className="mb-3" controlId="formLoginEmail">
                     <Form.Control
                       type="email"
-                      name="loginemail"
+                      name="login-email-field"
                       placeholder="Your email"
                       value={userEmail}
-                      onChange={handleLoginEmailChange}
+                      onChange={(e) => setUserEmail(e.target.value)}
                       required
                       className="auth-input"
+                      autoComplete="off"
                     />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formLoginPassword">
                     <Form.Control
                       type="password"
-                      name="loginpassword"
+                      name="login-password-field"
                       placeholder="Your password"
                       value={userPassword}
-                      onChange={handleLoginPasswordChange}
+                      onChange={(e) => setUserPassword(e.target.value)}
                       required
                       className="auth-input"
+                      autoComplete="off"
                     />
                   </Form.Group>
-                  <div className="d-flex justify-content-between mb-3">
-                    <Form.Check
-                      type="checkbox"
-                      label="Remember me"
-                      checked={rememberMe}
-                      onChange={() => setRememberMe(!rememberMe)}
-                      className="auth-remember"
-                    />
-
-                  </div>
                   <Button
                     className="auth-button w-100 mb-3"
                     type="submit"
@@ -260,7 +207,7 @@ const UserCard = () => {
                 </Form>
                 <p className="auth-switch-text">
                   Don't have an account?{" "}
-                  <span className="auth-switch-link" onClick={() => setIsSignup(true)}>
+                  <span className="auth-switch-link" onClick={() => { setIsSignup(true); setAlert({ show: false, message: "", variant: "" }); }}>
                     Sign up
                   </span>
                 </p>

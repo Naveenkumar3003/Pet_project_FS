@@ -6,11 +6,6 @@ import { useNavigate } from "react-router-dom";
 const HeroSection = () => {
   const navigate = useNavigate();
 
-  // Function to navigate to the adoption page
-  const handleClick = () => {
-    navigate("/adopt");
-  };
-
   return (
     <Container className="col-xxl-8 px-4 py-5" style={{ backgroundColor: "" }}>
       <Row className="flex-lg-row-reverse align-items-center g-5 py-5" style={{ borderColor: '#f75e38' }}>
@@ -39,15 +34,20 @@ const HeroSection = () => {
             discover local pet resources. PetPals Connect is here to help you
             find and care for your new furry friend!
           </p>
-          <div className="d-grid gap-2 d-md-flex justify-content-md-start">
+          <div className="d-grid gap-3 d-md-flex justify-content-md-start mt-4">
             <Button
-              style={{ width: "200px" }}
-              className="px-4 me-md-2"
-              id="gen-btn"
-              variant="outline-success"
-              onClick={handleClick}
+              className="btn-custom-primary px-4 py-2"
+              onClick={() => navigate('/catalog')}
             >
-              Adopt Me
+              Browse All Pets
+            </Button>
+            <Button
+              variant="outline-secondary"
+              className="px-4 py-2"
+              style={{ borderRadius: '12px', fontWeight: '600' }}
+              onClick={() => navigate('/catalog')}
+            >
+              Learn More
             </Button>
           </div>
         </Col>

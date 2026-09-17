@@ -1,58 +1,92 @@
 import React from "react";
-import { Button, Card, Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import './PetList.css';
-import './AllDetails/styles.css';
+
+const CATEGORY_CARDS = [
+  {
+    id: 'Dog',
+    title: 'Dogs & Puppies',
+    subtitle: 'Loyal companions and energetic friends',
+    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'Cat',
+    title: 'Cats & Kittens',
+    subtitle: 'Independent, affectionate and playful',
+    image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'Bird',
+    title: 'Birds & Parrots',
+    subtitle: 'Colorful, musical and highly intelligent',
+    image: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'Rabbit',
+    title: 'Rabbits & Bunnies',
+    subtitle: 'Gentle, quiet and adorable companions',
+    image: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'Small Pet',
+    title: 'Small Pets & Hamsters',
+    subtitle: 'Curious, energetic and low-maintenance',
+    image: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'Reptile',
+    title: 'Reptiles & Aquatics',
+    subtitle: 'Fascinating, calm and unique exotic pets',
+    image: 'https://images.unsplash.com/photo-1563281577-a7be47e20db9?auto=format&fit=crop&w=600&q=80',
+  }
+];
 
 const PetList = () => {
   const navigate = useNavigate();
 
-  const handleDogClick = () => {
-    navigate('/dogs');
-  };
-
-  const handleCatClick = () => {
-    navigate('/cats');
+  const handleCategorySelect = (categoryId) => {
+    navigate(`/catalog?category=${categoryId}`);
   };
 
   return (
-    <Container className="pet-list-container">
-      <Row className="justify-content-center">
-        <Col md={6}>
-          <div className="d-grid gap-4 pet-grid">
-            <Card className="text-center pet-card">
-              <Card.Img
-                variant="top"
-                src="https://i.pinimg.com/236x/fe/de/cc/fedecc5f7c08330b01c1088d8f98c0c3.jpg"
-                alt="Dogs and Puppies"
-              />
-              <Card.Body>
-                <Card.Title>Dogs and Puppies</Card.Title>
-                <div className="d-grid">
-                  <Button onClick={handleDogClick} className="adopt-btn">
-                    Dogs
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
+    <Container className="py-5">
+      <div className="text-center mb-5">
+        <h2 className="section-heading">Browse Pet Categories</h2>
+        <p className="section-subheading text-muted">
+          Choose a species category to view rescued pets waiting for loving homes.
+        </p>
+      </div>
 
-            <Card className="text-center pet-card">
-              <Card.Img
-                variant="top"
-                src="https://i.pinimg.com/236x/a3/a2/98/a3a2981c812d1873cf25ff393babde00.jpg"
-                alt="Cats and Kittens"
-              />
-              <Card.Body>
-                <Card.Title>Cats and Kittens</Card.Title>
-                <div className="d-grid">
-                  <Button onClick={handleCatClick} className="adopt-btn">
-                    Cats
-                  </Button>
+      <Row className="g-4">
+        {CATEGORY_CARDS.map((cat) => (
+          <Col key={cat.id} xs={12} sm={6} md={4}>
+            <Card 
+              className="h-100 category-feature-card glass-card text-center"
+              onClick={() => handleCategorySelect(cat.id)}
+            >
+              <div className="cat-img-box">
+                <Card.Img
+                  variant="top"
+                  src={cat.image}
+                  alt={cat.title}
+                  className="cat-feature-img"
+                />
+              </div>
+              <Card.Body className="d-flex flex-column justify-content-between p-4">
+                <div>
+                  <Card.Title className="cat-card-title">{cat.title}</Card.Title>
+                  <Card.Text className="cat-card-sub text-muted">{cat.subtitle}</Card.Text>
+                </div>
+                <div className="mt-3">
+                  <button className="btn-explore-cat">
+                    Explore
+                  </button>
                 </div>
               </Card.Body>
             </Card>
-          </div>
-        </Col>
+          </Col>
+        ))}
       </Row>
     </Container>
   );

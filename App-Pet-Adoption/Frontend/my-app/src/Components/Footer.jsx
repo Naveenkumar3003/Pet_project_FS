@@ -54,7 +54,7 @@ export default function Footer() {
         style={{ backgroundColor: "rgba(0, 0, 0, 0)" , color:'black'}}
       >
         © 2025 Copyright:
-        <a className="text-reset fw-bold" href="#" >
+        <a className="text-reset fw-bold" href="/home" >
           PetpalsConnect.com
         </a>
       </div>
